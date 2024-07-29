@@ -4,5 +4,3 @@
 1. I like computers.
 2. I am from California.
 3. I am a twin.
-
-
