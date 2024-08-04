@@ -9,9 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan("com.revature.models")
 @EnableJpaRepositories("com.revature.repositories")
 public class DreamJournelApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(DreamJournelApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(DreamJournelApplication.class, args);
+    }
 }

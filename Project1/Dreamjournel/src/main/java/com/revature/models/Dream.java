@@ -37,15 +37,19 @@ public class Dream {
    // @ManyToOne
     //@JoinColumn(name="user_id")
     //private User user;
+//    @ManyToOne(fetch=FetchType.EAGER)
+//    @JsonBackReference
+//    @JoinColumn(name = "fk_userid")
+//    private User user;
 
     //Constructor just for tests.
-    public Dream(int id, List<String> themes, List<Integer> archetypes, String description, String interpretationUser, LocalDateTime timeStamp){
-        this.id = id;
-        this.themes = themes;
-        this.archetypes = archetypes;
-        this.description = description;
-        this.interpretationUser = interpretationUser;
-        this.timeStamp = timeStamp;
-    }
+//    public Dream(int id, List<String> themes, List<Integer> archetypes, String description, String interpretationUser, LocalDateTime timeStamp){
+//        this.id = id;
+//        this.themes = themes;
+//        this.archetypes = archetypes;
+//        this.description = description;
+//        this.interpretationUser = interpretationUser;
+//        this.timeStamp = timeStamp;
+//    }
 }
 

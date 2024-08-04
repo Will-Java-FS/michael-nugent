@@ -45,13 +45,18 @@ public class UserController {
         return US.findUsernameAndPassword(user.getUsername(),user.getPassword());
 
     }
+    @DeleteMapping("/{id}")
+    public void deleteuser(@PathVariable int id){
+        US.deleteById(id);
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable int id){
+        return US.getById(id);
+    }
 }
 
 
-  // @GetMapping("/{id}")
-  //  public List<Dream> getAllDreamsByUser(@PathVariable int userid){
-  //      return DS.getAllDreamsByUser(userid);
-  //  }
 
 
 

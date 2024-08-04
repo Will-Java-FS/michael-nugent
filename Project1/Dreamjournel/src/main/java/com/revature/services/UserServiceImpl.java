@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import java.util.Optional;
 import com.revature.models.User;
 import com.revature.repositories.DreamRepo;
 import com.revature.repositories.UserRepo;
@@ -24,13 +25,24 @@ public class UserServiceImpl implements UserService {
     public User saveUser(User user) {
         return UR.save(user);
     }
-    @Override
-    public User findUsername(String username){
-       return  UR.findByUsername(username);
 
-    }
     @Override
-    public User findUsernameAndPassword(String username, String password){
-        return UR.findByUsernameAndPassword(username,password);
+    public User findUsername(String username) {
+        return UR.findByUsername(username);
+    }
+
+    @Override
+    public User findUsernameAndPassword(String username, String password) {
+        return UR.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public User getById(int id) {
+        return UR.findById(id).orElse(null);
+    }
+
+    @Override
+    public void deleteById(int id){
+        UR.deleteById(id);
     }
 }
