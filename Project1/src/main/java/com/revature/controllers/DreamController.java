@@ -6,6 +6,7 @@ import com.revature.services.DreamService;
 import com.revature.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,8 +59,18 @@ public class DreamController {
     }
 
     @DeleteMapping("/{id}")
-    public Dream deleteDreamById(@PathVariable int id) {
-        return ds.deleteDreamById(id);
+    public ResponseEntity<Object> deleteDreamById(@PathVariable int id) {
+
+//        return ds.deleteDreamById(id);
+        Dream dream =ds.getDream(id);
+
+        if(dream!=null) {
+            Dream del = ds.deleteDreamById(id);
+            return ResponseEntity.ok().body(del);
+        }
+        else {
+            return ResponseEntity.status(404).body("Dream doesn't exist");
+        }
     }
 
     private int getUserIdFromAuthHeader(String authHeader) {

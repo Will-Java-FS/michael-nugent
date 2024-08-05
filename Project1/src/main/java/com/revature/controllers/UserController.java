@@ -7,7 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -36,15 +38,27 @@ public class UserController {
     }
 
     @GetMapping(value = "/name")
-    public User finduser (@RequestBody User user) {
-        return US.findUsername(user.getUsername());
+    public ResponseEntity<Object> finduser(@RequestBody User user) {
+       User user1 = US.findUsername(user.getUsername());
+       if(user1!=null){
+           return ResponseEntity.ok().body(user1);
+       }else{
+           return ResponseEntity.status(404).body("Username not found");
 
+       }
+            //return US.findUsername(user.getUsername());
     }
+
     @GetMapping(value = "/login")
-    public User loginuser (@RequestBody User user) {
-        return US.findUsernameAndPassword(user.getUsername(),user.getPassword());
-
+    public ResponseEntity<Object> loginuser (@RequestBody User user) {
+        User user1 = US.findUsernameAndPassword(user.getUsername(),user.getPassword());
+        if(user1!=null){
+            return ResponseEntity.ok().body(user1);
+        }else{
+            return ResponseEntity.status(404).body("Username and Password are incorrect");
+        }
     }
+
     @DeleteMapping("/{id}")
     public void deleteuser(@PathVariable int id){
         US.deleteById(id);
