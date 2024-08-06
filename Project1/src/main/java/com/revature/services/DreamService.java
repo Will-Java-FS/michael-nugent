@@ -14,6 +14,7 @@ public interface DreamService {
     Dream updateDream(int userId, int id, Dream dream);
     List<Dream> getAllDreamsByUser(int fk_userid);
     Dream deleteDreamById(int id);
+    void deleteDreamsByUserid(int id);
 
     // List<Dream> getAllDreamsByUser(int userid);
 

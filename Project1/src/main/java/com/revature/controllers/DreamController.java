@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dreams")
-@RequiredArgsConstructor
 public class DreamController {
 
     @Autowired
