@@ -2,6 +2,7 @@ package com.revature.repositories;
 
 import com.revature.models.Dream;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,9 +21,9 @@ public interface DreamRepo extends JpaRepository<Dream, Integer> {
     List<Dream> findAllDreamByFk_userId (int fk_userid);
     Dream deleteById(int id);
 
-
-    @Query("Delete FROM Dream d WHERE d.fk_userid  = :fk_userid")
-    void deleteByFkUserId(int fk_userid);
+    @Modifying
+   @Query("DELETE FROM Dream d WHERE d.fk_userid  = :fk_userid")
+    void deleteByFk_userid(@Param("fk_userid") int fk_userid);
 }
 
 

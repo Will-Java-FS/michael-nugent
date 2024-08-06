@@ -75,6 +75,7 @@ public class DreamServiceImpl implements DreamService {
         Optional.ofNullable(updatedDream.getArchetypes()).ifPresent(retrievedDream::setArchetypes);
         Optional.ofNullable(updatedDream.getDescription()).ifPresent(retrievedDream::setDescription);
         Optional.ofNullable(updatedDream.getInterpretationUser()).ifPresent(retrievedDream::setInterpretationUser);
+        Optional.ofNullable((updatedDream.getInterpretationAI())).ifPresent(retrievedDream::setInterpretationAI);
 
         //Update Time Stamp to now()
         retrievedDream.setTimeStamp(updatedDream.getTimeStamp());
@@ -87,7 +88,7 @@ public class DreamServiceImpl implements DreamService {
     }
 
     public void deleteDreamsByUserid(int id){
-        dr.deleteByFkUserId(id);
+         dr.deleteByFk_userid(id);
     }
 }
 
