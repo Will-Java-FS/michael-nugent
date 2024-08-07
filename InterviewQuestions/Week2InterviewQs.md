@@ -3517,3 +3517,2609 @@ To write an IIFE, follow these steps:
 **Conclusion:**
 
 - IIFEs are a powerful tool for creating isolated scopes, preventing variable conflicts, and executing code immediately. They are widely used in modern JavaScript development for encapsulation and modularization.
+
+Here's an overview of the topics and questions you've asked about JavaScript (ES6+), DOM Manipulation, Asynchronous Web, and TypeScript. I've provided detailed explanations and examples for each question.
+
+## ES6+
+
+### Basic
+
+---
+
+#### What standard is JS based off of?
+
+JavaScript is based on the ECMAScript (ES) standard, which is a scripting language specification standardized by ECMA International. ECMAScript provides the foundation for JavaScript and defines the syntax, semantics, and features of the language.
+
+- **Versions:** ES6 (ECMAScript 2015) introduced major improvements, including arrow functions, let/const, template literals, and more.
+- **Updates:** ECMAScript is regularly updated, with new versions released annually (e.g., ES2016, ES2017).
+
+---
+
+#### What is the difference between `var`, `let`, and `const` keywords?
+
+The keywords `var`, `let`, and `const` are used to declare variables in JavaScript, but they have different scoping rules and behaviors:
+
+1. **`var`:**
+   - **Scope:** Function-scoped or globally-scoped, depending on where it's declared.
+   - **Hoisting:** Variables declared with `var` are hoisted to the top of their scope but are initialized with `undefined`.
+   - **Reassignment:** Can be reassigned and re-declared within the same scope.
+   
+   ```javascript
+   function example() {
+       console.log(x); // undefined (hoisted)
+       var x = 10;
+       console.log(x); // 10
+   }
+   ```
+
+2. **`let`:**
+   - **Scope:** Block-scoped, meaning it is only accessible within the block (e.g., `{}`) where it's declared.
+   - **Hoisting:** Variables declared with `let` are hoisted but not initialized, leading to a "temporal dead zone" until they are defined.
+   - **Reassignment:** Can be reassigned but not re-declared within the same scope.
+   
+   ```javascript
+   function example() {
+       // console.log(y); // ReferenceError: Cannot access 'y' before initialization
+       let y = 20;
+       console.log(y); // 20
+   }
+   ```
+
+3. **`const`:**
+   - **Scope:** Block-scoped like `let`.
+   - **Hoisting:** Similar behavior to `let` with hoisting and the "temporal dead zone."
+   - **Reassignment:** Cannot be reassigned or re-declared. The variable must be initialized at the time of declaration.
+   - **Note:** `const` does not make objects immutable; it only prevents reassignment of the reference.
+   
+   ```javascript
+   const z = 30;
+   // z = 40; // TypeError: Assignment to constant variable
+   const obj = { name: "Alice" };
+   obj.name = "Bob"; // Allowed
+   ```
+
+---
+
+#### How would we rewrite this code with a template literal?
+
+**Original Code:**
+
+```javascript
+let n = 'Dorian';
+let message = 'My name is ' + n;
+console.log(message);
+```
+
+**Rewritten with Template Literal:**
+
+Template literals allow embedding expressions within strings using backticks (\`` `) and `${}` for placeholders.
+
+```javascript
+let n = 'Dorian';
+let message = `My name is ${n}`;
+console.log(message);
+```
+
+Template literals offer several benefits:
+- **Multi-line Strings:** Support multi-line strings without needing escape sequences.
+- **Expression Interpolation:** Easily embed variables and expressions.
+- **Enhanced Readability:** Improve readability and maintainability of complex strings.
+
+---
+
+### Intermediate
+
+---
+
+#### What’s the difference between a normal function declaration and an arrow function?
+
+**Normal Function Declaration:**
+
+```javascript
+function add(a, b) {
+    return a + b;
+}
+```
+
+**Arrow Function:**
+
+```javascript
+const add = (a, b) => {
+    return a + b;
+};
+```
+
+**Key Differences:**
+
+1. **Syntax:**
+   - **Arrow functions** have a concise syntax using `=>`.
+   - **Function declarations** require the `function` keyword.
+
+2. **`this` Binding:**
+   - **Arrow functions** do not have their own `this` context. They inherit `this` from the surrounding scope (lexical scoping).
+   - **Function declarations** have their own `this` context.
+
+   ```javascript
+   const obj = {
+       value: 10,
+       arrowFunc: () => {
+           console.log(this.value); // undefined (inherited from global scope)
+       },
+       normalFunc: function() {
+           console.log(this.value); // 10 (refers to obj's value)
+       }
+   };
+   obj.arrowFunc();
+   obj.normalFunc();
+   ```
+
+3. **`arguments` Object:**
+   - **Arrow functions** do not have their own `arguments` object.
+   - **Function declarations** have an `arguments` object that contains the function's arguments.
+
+   ```javascript
+   const arrowFunc = () => {
+       console.log(arguments); // ReferenceError: arguments is not defined
+   };
+   function normalFunc() {
+       console.log(arguments); // [Arguments] { '0': 1, '1': 2 }
+   }
+   normalFunc(1, 2);
+   ```
+
+4. **Use Cases:**
+   - **Arrow functions** are often used for concise callbacks, especially in functional programming.
+   - **Function declarations** are preferred when `this` context or arguments are needed.
+
+---
+
+#### How would you set default values for parameters to a function?
+
+You can set default values for function parameters in ES6+ using the syntax `parameter = defaultValue`.
+
+**Example:**
+
+```javascript
+function greet(name = "Guest") {
+    console.log(`Hello, ${name}!`);
+}
+
+greet(); // Output: Hello, Guest!
+greet("Alice"); // Output: Hello, Alice!
+```
+
+**Arrow Function with Default Parameters:**
+
+```javascript
+const greet = (name = "Guest") => {
+    console.log(`Hello, ${name}!`);
+};
+
+greet(); // Output: Hello, Guest!
+greet("Alice"); // Output: Hello, Alice!
+```
+
+**Benefits of Default Parameters:**
+
+- **Simplify Code:** Reduces the need for conditional checks for undefined parameters.
+- **Flexibility:** Allows functions to be more flexible by handling missing arguments gracefully.
+
+---
+
+#### Explain the `async/await` keywords. Why is it preferred to use this instead of `.then()` methods?
+
+**`async`/`await`:**
+
+- **`async` Functions:** A function declared with `async` returns a Promise. It can contain `await` expressions to pause execution until a Promise is resolved.
+
+  ```javascript
+  async function fetchData() {
+      const response = await fetch('https://api.example.com/data');
+      const data = await response.json();
+      return data;
+  }
+  ```
+
+- **`await` Keyword:** Pauses the execution of an `async` function until the Promise is resolved. It can only be used inside `async` functions.
+
+**Why Prefer `async/await` over `.then()`:**
+
+1. **Readability:** `async/await` provides a more readable and synchronous-like code structure compared to nested `.then()` chains.
+
+   **Example with `.then()`:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => response.json())
+       .then(data => {
+           console.log(data);
+       })
+       .catch(error => {
+           console.error(error);
+       });
+   ```
+
+   **Example with `async/await`:**
+
+   ```javascript
+   async function fetchData() {
+       try {
+           const response = await fetch('https://api.example.com/data');
+           const data = await response.json();
+           console.log(data);
+       } catch (error) {
+           console.error(error);
+       }
+   }
+   ```
+
+2. **Error Handling:** `async/await` uses try-catch blocks for error handling, making it easier to manage errors in complex asynchronous code.
+
+3. **Debugging:** Debugging `async/await` code is often simpler because the stack trace more accurately reflects the logical flow of the program.
+
+4. **Maintainability:** Asynchronous code with `async/await` is more maintainable, especially in larger projects, due to its linear structure.
+
+**Note:** Despite its advantages, `async/await` is syntactic sugar over Promises and doesn't replace the need for Promises. Understanding Promises is crucial for mastering `async/await`.
+
+---
+
+#### How do you interact with a Promise? When would it be appropriate to use a Promise?
+
+**Interacting with a Promise:**
+
+1. **Creating a Promise:**
+
+   ```javascript
+   const myPromise = new Promise((resolve, reject) => {
+       // Asynchronous operation
+       if (operationSuccess) {
+           resolve(result);
+       } else {
+           reject(error);
+       }
+   });
+   ```
+
+2. **Using `.then()` and `.catch()`:**
+
+   ```javascript
+   myPromise
+       .then(result => {
+           console.log('Success:', result);
+       })
+       .catch(error => {
+           console.error('Error:', error);
+       });
+   ```
+
+3. **Using `async/await`:**
+
+   ```javascript
+   async function handlePromise() {
+       try {
+           const result = await myPromise;
+           console.log('Success:', result);
+       } catch (error) {
+           console.error('Error:', error);
+       }
+   }
+   ```
+
+**When to Use Promises:**
+
+1. **Asynchronous Operations:** Use Promises for operations that may take time, such as network requests, file I/O, or database queries.
+
+2. **Chained Operations:** Promises allow chaining multiple asynchronous operations,
+
+ ensuring they execute in order.
+
+3. **Handling Errors:** Promises provide a clean way to handle errors, allowing the use of `.catch()` to handle failures.
+
+4. **Improving Readability:** Promises help improve the readability of asynchronous code by avoiding deeply nested callbacks (callback hell).
+
+**Example Use Case:**
+
+```javascript
+function fetchData() {
+    return new Promise((resolve, reject) => {
+        fetch('https://api.example.com/data')
+            .then(response => response.json())
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+    });
+}
+
+fetchData()
+    .then(data => {
+        console.log('Data:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+---
+
+## DOM Manipulation
+
+### Basic
+
+---
+
+#### Explain the following code:
+
+```javascript
+document.getElementById("myid").addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+```
+
+**Explanation:**
+
+1. **`document.getElementById("myid")`:** This selects the HTML element with the ID `myid`.
+
+2. **`addEventListener('click', (e) => {...})`:** Attaches an event listener to the element that listens for a `click` event. When the element is clicked, the specified callback function is executed.
+
+3. **`e.stopPropagation()`:** Prevents the event from bubbling up to parent elements. This means that the click event will not trigger any click event listeners on ancestor elements.
+
+**Use Case:**
+
+- **Event Propagation Control:** Useful when you want to handle an event exclusively on a specific element without affecting its parent elements. For example, stopping a modal dialog from closing when clicking inside it.
+
+**Example:**
+
+```html
+<div id="parent">
+    <button id="myid">Click Me</button>
+</div>
+```
+
+```javascript
+document.getElementById("parent").addEventListener('click', () => {
+    console.log('Parent clicked');
+});
+
+document.getElementById("myid").addEventListener('click', (e) => {
+    e.stopPropagation();
+    console.log('Button clicked');
+});
+```
+
+- **Without `e.stopPropagation()`:** Clicking the button logs "Button clicked" and "Parent clicked."
+- **With `e.stopPropagation()`:** Clicking the button logs only "Button clicked."
+
+---
+
+#### What is the global object in client-side JavaScript? What are some built-in functions on this object?
+
+**Global Object in Client-Side JavaScript:**
+
+- In client-side JavaScript, the global object is `window`.
+- The `window` object represents the browser's window and provides access to the DOM, browser history, location, and more.
+
+**Built-In Functions on the Global Object:**
+
+1. **`alert(message)`:** Displays an alert dialog with the specified message.
+
+   ```javascript
+   alert("Hello, World!");
+   ```
+
+2. **`console.log(message)`:** Logs a message to the browser console.
+
+   ```javascript
+   console.log("Debugging message");
+   ```
+
+3. **`setTimeout(function, delay)`:** Executes a function after a specified delay (in milliseconds).
+
+   ```javascript
+   setTimeout(() => {
+       console.log("Executed after 2 seconds");
+   }, 2000);
+   ```
+
+4. **`setInterval(function, interval)`:** Repeatedly executes a function at specified intervals (in milliseconds).
+
+   ```javascript
+   setInterval(() => {
+       console.log("Executed every 1 second");
+   }, 1000);
+   ```
+
+5. **`parseInt(string, radix)`:** Parses a string and returns an integer of the specified radix.
+
+   ```javascript
+   const number = parseInt("42", 10);
+   ```
+
+6. **`encodeURIComponent(str)`:** Encodes a URI component by replacing special characters.
+
+   ```javascript
+   const encoded = encodeURIComponent("Hello, World!");
+   ```
+
+7. **`decodeURIComponent(str)`:** Decodes a URI component.
+
+   ```javascript
+   const decoded = decodeURIComponent(encoded);
+   ```
+
+**Note:** These functions are accessible globally and do not require the `window` prefix (e.g., `window.alert`).
+
+---
+
+#### What is the DOM? How is it represented as a data structure? What object in a browser environment allows us to interact with the DOM?
+
+**Document Object Model (DOM):**
+
+- The DOM is a programming interface that represents the structure of an HTML or XML document.
+- It provides a tree-like structure where each element, attribute, and text in the document is represented as a node.
+
+**DOM as a Data Structure:**
+
+- **Tree Structure:** The DOM is organized as a tree, with a root node (the document itself) and child nodes (elements, attributes, text).
+- **Node Types:**
+  - **Element Nodes:** Represent HTML elements (e.g., `<div>`, `<p>`).
+  - **Text Nodes:** Represent text content within elements.
+  - **Attribute Nodes:** Represent attributes of elements (e.g., `id`, `class`).
+
+**Interacting with the DOM:**
+
+- **`document` Object:** The `document` object in a browser environment allows us to interact with the DOM.
+- **Methods and Properties:**
+  - **`document.getElementById(id)`:** Selects an element by its ID.
+  - **`document.querySelector(selector)`:** Selects the first element that matches the CSS selector.
+  - **`document.createElement(tagName)`:** Creates a new element.
+  - **`document.body`:** Represents the `<body>` element of the document.
+
+**Example:**
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Example</title>
+</head>
+<body>
+    <div id="container">
+        <p>Hello, World!</p>
+    </div>
+    <script>
+        const container = document.getElementById('container');
+        console.log(container.innerHTML); // Outputs: <p>Hello, World!</p>
+    </script>
+</body>
+</html>
+```
+
+---
+
+#### List some ways of querying the DOM for elements
+
+There are several methods to query the DOM for elements:
+
+1. **`document.getElementById(id)`:** Selects an element by its ID.
+
+   ```javascript
+   const element = document.getElementById('myId');
+   ```
+
+2. **`document.getElementsByClassName(className)`:** Selects elements by their class name. Returns a live HTMLCollection.
+
+   ```javascript
+   const elements = document.getElementsByClassName('myClass');
+   ```
+
+3. **`document.getElementsByTagName(tagName)`:** Selects elements by their tag name. Returns a live HTMLCollection.
+
+   ```javascript
+   const paragraphs = document.getElementsByTagName('p');
+   ```
+
+4. **`document.querySelector(selector)`:** Selects the first element that matches the CSS selector.
+
+   ```javascript
+   const element = document.querySelector('.myClass');
+   ```
+
+5. **`document.querySelectorAll(selector)`:** Selects all elements that match the CSS selector. Returns a static NodeList.
+
+   ```javascript
+   const elements = document.querySelectorAll('div.myClass');
+   ```
+
+6. **`document.forms[index]`:** Selects a form element by its index in the document.
+
+   ```javascript
+   const form = document.forms[0];
+   ```
+
+7. **`document.links`:** Selects all `<a>` elements with an `href` attribute in the document.
+
+   ```javascript
+   const links = document.links;
+   ```
+
+8. **`document.images`:** Selects all `<img>` elements in the document.
+
+   ```javascript
+   const images = document.images;
+   ```
+
+9. **`document.anchors`:** Selects all `<a>` elements with a `name` attribute in the document.
+
+   ```javascript
+   const anchors = document.anchors;
+   ```
+
+**Note:** Modern JavaScript often uses `querySelector` and `querySelectorAll` due to their flexibility and support for complex CSS selectors.
+
+---
+
+#### How would you insert a new element into the DOM?
+
+You can insert a new element into the DOM using various methods provided by the DOM API:
+
+1. **`createElement()`:** Create the new element.
+
+2. **`appendChild()`:** Append the new element as a child of an existing element.
+
+3. **`insertBefore()`:** Insert the new element before a specific child of an existing element.
+
+4. **`innerHTML`:** Use to add HTML content directly (less preferred due to performance and security concerns).
+
+**Example:**
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert Element Example</title>
+</head>
+<body>
+    <div id="container">
+        <p>First Paragraph</p>
+    </div>
+    <script>
+        // Create a new element
+        const newParagraph = document.createElement('p');
+        newParagraph.textContent = 'Second Paragraph';
+
+        // Append the new element to the container
+        const container = document.getElementById('container');
+        container.appendChild(newParagraph);
+
+        // Insert a new element before the first paragraph
+        const firstParagraph = container.querySelector('p');
+        const anotherParagraph = document.createElement('p');
+        anotherParagraph.textContent = 'Inserted Before First Paragraph';
+        container.insertBefore(anotherParagraph, firstParagraph);
+    </script>
+</body>
+</html>
+```
+
+**Output:**
+
+```html
+<div id="container">
+    <p>Inserted Before First Paragraph</p>
+    <p>First Paragraph</p>
+    <p>Second Paragraph</
+
+p>
+</div>
+```
+
+**Methods Overview:**
+
+- **`createElement(tagName)`:** Creates a new element node with the specified tag name.
+- **`appendChild(newNode)`:** Appends a new child node to the end of the parent node's list of children.
+- **`insertBefore(newNode, referenceNode)`:** Inserts the new node before the reference node as a child of the specified parent.
+- **`innerHTML`:** Directly sets the HTML content of an element.
+
+**Note:** When using `innerHTML`, be cautious of potential security risks like Cross-Site Scripting (XSS) attacks.
+
+---
+
+#### What are event listeners? What are some events we can listen for? What are some different ways of setting event listeners?
+
+**Event Listeners:**
+
+- Event listeners are functions that are triggered in response to specific events occurring on DOM elements.
+- They enable interactive behavior by responding to user actions like clicks, keyboard input, and more.
+
+**Common Events:**
+
+1. **Mouse Events:**
+   - **`click`:** Triggered when an element is clicked.
+   - **`dblclick`:** Triggered on a double-click.
+   - **`mouseover`:** Triggered when the mouse hovers over an element.
+   - **`mouseout`:** Triggered when the mouse leaves an element.
+   - **`mousedown`:** Triggered when the mouse button is pressed.
+   - **`mouseup`:** Triggered when the mouse button is released.
+
+2. **Keyboard Events:**
+   - **`keydown`:** Triggered when a key is pressed.
+   - **`keyup`:** Triggered when a key is released.
+   - **`keypress`:** Triggered when a key is pressed and released (deprecated).
+
+3. **Form Events:**
+   - **`submit`:** Triggered when a form is submitted.
+   - **`change`:** Triggered when the value of an input changes.
+   - **`focus`:** Triggered when an element gains focus.
+   - **`blur`:** Triggered when an element loses focus.
+
+4. **Window Events:**
+   - **`load`:** Triggered when the page is fully loaded.
+   - **`resize`:** Triggered when the window is resized.
+   - **`scroll`:** Triggered when the window is scrolled.
+
+5. **Touch Events (Mobile):**
+   - **`touchstart`:** Triggered when a touch point is placed on the touch surface.
+   - **`touchmove`:** Triggered when a touch point is moved along the touch surface.
+   - **`touchend`:** Triggered when a touch point is removed from the touch surface.
+
+**Setting Event Listeners:**
+
+1. **Using `addEventListener()`:**
+
+   ```javascript
+   const button = document.getElementById('myButton');
+   button.addEventListener('click', () => {
+       console.log('Button clicked!');
+   });
+   ```
+
+   - **Benefits:** Allows multiple listeners for the same event, provides options for event capturing/bubbling, and supports event removal.
+
+2. **Inline HTML Attributes (Deprecated):**
+
+   ```html
+   <button id="myButton" onclick="alert('Button clicked!')">Click Me</button>
+   ```
+
+   - **Drawbacks:** Less separation of concerns, harder to maintain, and less flexible.
+
+3. **Using DOM Properties:**
+
+   ```javascript
+   const button = document.getElementById('myButton');
+   button.onclick = () => {
+       console.log('Button clicked!');
+   };
+   ```
+
+   - **Drawbacks:** Only one listener per event type, overrides previous assignments.
+
+4. **Event Delegation (Efficient Handling):**
+
+   - Use a single listener on a parent element to manage events for multiple child elements.
+
+   ```javascript
+   const list = document.getElementById('myList');
+   list.addEventListener('click', (e) => {
+       if (e.target.tagName === 'LI') {
+           console.log(`List item ${e.target.textContent} clicked!`);
+       }
+   });
+   ```
+
+**Event Listener Options:**
+
+- **Capture/Bubble Phase:** Specify whether the listener should act in the capture or bubble phase.
+
+  ```javascript
+  element.addEventListener('click', handler, { capture: true });
+  ```
+
+- **Once:** Ensure the listener executes only once and is removed afterward.
+
+  ```javascript
+  element.addEventListener('click', handler, { once: true });
+  ```
+
+- **Passive:** Indicate that the listener will not call `preventDefault()` (improves performance for scroll events).
+
+  ```javascript
+  element.addEventListener('scroll', handler, { passive: true });
+  ```
+
+**Note:** `addEventListener()` is the preferred method due to its flexibility and adherence to modern JavaScript best practices.
+
+---
+
+#### What is bubbling and capturing and what is the difference?
+
+**Event Propagation:**
+
+Event propagation defines how events travel through the DOM tree. There are two main phases: capturing and bubbling.
+
+1. **Capturing Phase (Trickling):**
+   - Events travel from the root (document) down to the target element.
+   - **Capture Phase:** The event moves through ancestor elements before reaching the target.
+
+2. **Bubbling Phase:**
+   - Events travel from the target element back up to the root (document).
+   - **Bubble Phase:** The event moves through ancestor elements after reaching the target.
+
+**Difference:**
+
+- **Capturing:** The event is handled by parent elements first, then the target element.
+- **Bubbling:** The event is handled by the target element first, then the parent elements.
+
+**Example:**
+
+Consider the following HTML structure:
+
+```html
+<div id="parent">
+    <button id="child">Click Me</button>
+</div>
+```
+
+**JavaScript:**
+
+```javascript
+document.getElementById('parent').addEventListener('click', () => {
+    console.log('Parent clicked');
+}, true); // Capturing phase
+
+document.getElementById('child').addEventListener('click', () => {
+    console.log('Child clicked');
+}); // Bubbling phase
+```
+
+**Output on Click:**
+
+1. **Capturing:** "Parent clicked" (captures first), "Child clicked" (bubbles later).
+2. **Bubbling:** "Child clicked" (bubbles first), "Parent clicked" (captures later).
+
+**Event Propagation Control:**
+
+- **`stopPropagation()`:** Stops the event from propagating further in either phase.
+- **`stopImmediatePropagation()`:** Stops the event from propagating and prevents any other listeners on the current target.
+
+**Use Cases:**
+
+- **Capturing:** Useful for actions that need to occur before child elements handle the event (e.g., intercepting form submissions).
+- **Bubbling:** Commonly used for event delegation, allowing parent elements to manage child elements' events.
+
+**Best Practice:**
+
+- Use bubbling for most cases unless specific use cases require capturing.
+- Handle events on parent elements for efficiency and simplicity.
+
+---
+
+#### What are some methods on the event object and what do they do?
+
+The event object provides information about an event and methods to control its behavior.
+
+**Common Event Methods:**
+
+1. **`stopPropagation()`:**
+   - Prevents the event from propagating further in the capturing and bubbling phases.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       e.stopPropagation();
+   });
+   ```
+
+2. **`stopImmediatePropagation()`:**
+   - Stops the event from propagating and prevents any remaining listeners on the current target from executing.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       e.stopImmediatePropagation();
+   });
+   ```
+
+3. **`preventDefault()`:**
+   - Prevents the default action associated with the event (e.g., link navigation, form submission).
+
+   ```javascript
+   element.addEventListener('submit', (e) => {
+       e.preventDefault();
+   });
+   ```
+
+4. **`initEvent()`:** (Deprecated)
+   - Initializes the value of an event created using `document.createEvent()`. Deprecated in favor of `Event` constructors.
+
+   ```javascript
+   const event = document.createEvent('Event');
+   event.initEvent('click', true, true);
+   ```
+
+5. **`dispatchEvent()`:**
+   - Dispatches an event to the target element, simulating the event's occurrence.
+
+   ```javascript
+   const event = new Event('click');
+   element.dispatchEvent(event);
+   ```
+
+6. **`preventDefault()`:**
+   - Prevents the default behavior associated with the event, such as navigating to a link or submitting a form.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       e.preventDefault(); // Prevents default link behavior
+   });
+   ```
+
+**Common Event Properties:**
+
+1. **`target`:**
+   - Refers to the element that triggered the event.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       console.log(e.target); // Element that triggered the click event
+   });
+   ```
+
+2. **`currentTarget`:**
+   - Refers to the element on which the event listener is currently executing.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       console.log(e.currentTarget); // Element with the click listener
+   });
+   ```
+
+3. **`type`:**
+   - The type of event that occurred (e.g., `'click'`, `'submit'`).
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       console.log(e.type); // 'click'
+   });
+   ``
+
+`
+
+4. **`bubbles`:**
+   - Indicates whether the event bubbles up through the DOM.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       console.log(e.bubbles); // true for bubbling events
+   });
+   ```
+
+5. **`defaultPrevented`:**
+   - Indicates whether the event's default action has been prevented.
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       e.preventDefault();
+       console.log(e.defaultPrevented); // true
+   });
+   ```
+
+6. **`eventPhase`:**
+   - Indicates the phase of event propagation: 1 (capturing), 2 (target), 3 (bubbling).
+
+   ```javascript
+   element.addEventListener('click', (e) => {
+       console.log(e.eventPhase); // Phase of the event
+   });
+   ```
+
+**Example Usage:**
+
+```html
+<button id="myButton">Click Me</button>
+<script>
+    const button = document.getElementById('myButton');
+    button.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default behavior
+        e.stopPropagation(); // Stop event propagation
+        console.log(e.target); // Button element
+        console.log(e.currentTarget); // Button element
+        console.log(e.type); // 'click'
+    });
+</script>
+```
+
+**Use Cases:**
+
+- **Custom Event Handling:** Modify or control event behavior for specific needs.
+- **Debugging and Logging:** Analyze event properties and behavior during development.
+- **Interactivity and User Experience:** Create interactive and dynamic web applications.
+
+---
+
+## Asynchronous Web
+
+### Basic
+
+---
+
+#### What is the Fetch API?
+
+The Fetch API is a modern web API for making HTTP requests in web applications. It provides an easy-to-use and flexible interface for interacting with network resources, replacing the older XMLHttpRequest (XHR) API.
+
+**Key Features:**
+
+1. **Promise-Based:** Fetch returns Promises, making it easier to work with asynchronous operations.
+
+2. **Readable Stream:** Supports streaming response bodies, allowing progressive data processing.
+
+3. **Flexibility:** Offers fine-grained control over request and response handling with methods like `Request`, `Response`, `Headers`, and `Body`.
+
+4. **CORS Support:** Automatically handles Cross-Origin Resource Sharing (CORS) requests.
+
+5. **Method Options:** Supports common HTTP methods like GET, POST, PUT, DELETE, and more.
+
+**Basic Usage:**
+
+```javascript
+fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+**Note:** Fetch doesn't automatically reject on HTTP error status (e.g., 404, 500); you must check the response status manually.
+
+---
+
+#### How do you send a Fetch request?
+
+To send a Fetch request, use the `fetch()` function with a URL and an optional options object.
+
+**Basic Fetch Request:**
+
+1. **GET Request:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => response.json())
+       .then(data => {
+           console.log(data);
+       })
+       .catch(error => {
+           console.error('Error:', error);
+       });
+   ```
+
+2. **POST Request:**
+
+   ```javascript
+   fetch('https://api.example.com/submit', {
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json'
+       },
+       body: JSON.stringify({
+           name: 'John Doe',
+           email: 'john@example.com'
+       })
+   })
+   .then(response => response.json())
+   .then(data => {
+       console.log('Success:', data);
+   })
+   .catch(error => {
+       console.error('Error:', error);
+   });
+   ```
+
+**Options Object:**
+
+- **`method`:** HTTP method (GET, POST, PUT, DELETE, etc.).
+- **`headers`:** HTTP headers as an object.
+- **`body`:** Request body (stringified JSON, FormData, etc.).
+- **`mode`:** CORS mode (`cors`, `no-cors`, `same-origin`).
+- **`credentials`:** Credentials mode (`omit`, `same-origin`, `include`).
+- **`cache`:** Cache mode (`default`, `no-store`, `reload`, etc.).
+
+**Example:**
+
+```javascript
+const url = 'https://api.example.com/data';
+const options = {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ key: 'value' })
+};
+
+fetch(url, options)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+**Note:** For non-GET requests, ensure the `Content-Type` header matches the request body format.
+
+---
+
+#### How would you retrieve JSON data from a Fetch request?
+
+To retrieve JSON data from a Fetch request, use the `json()` method on the `Response` object returned by `fetch()`.
+
+**Steps:**
+
+1. **Make the Fetch Request:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => {
+           // Check if response is OK (status in the range 200-299)
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           return response.json(); // Parse JSON data
+       })
+       .then(data => {
+           console.log(data); // Process JSON data
+       })
+       .catch(error => {
+           console.error('Error:', error);
+       });
+   ```
+
+2. **Using `async/await`:**
+
+   ```javascript
+   async function fetchData() {
+       try {
+           const response = await fetch('https://api.example.com/data');
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           const data = await response.json();
+           console.log(data);
+       } catch (error) {
+           console.error('Error:', error);
+       }
+   }
+
+   fetchData();
+   ```
+
+**Handling Response:**
+
+- **Check Response Status:** Use `response.ok` to verify successful response.
+- **Parse JSON:** Use `response.json()` to parse the JSON body.
+
+**Example API Response:**
+
+```json
+{
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+}
+```
+
+**Handling Large Data:**
+
+- **Readable Streams:** Fetch supports handling large JSON data efficiently using readable streams.
+
+```javascript
+fetch('https://api.example.com/large-data')
+    .then(response => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        return reader.read().then(function process({ done, value }) {
+            if (done) {
+                return;
+            }
+            const text = decoder.decode(value, { stream: true });
+            console.log(text); // Process chunk of JSON data
+            return reader.read().then(process);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+**Note:** Ensure the server response is in JSON format for successful parsing.
+
+---
+
+#### How do you handle a failed request in Fetch?
+
+Handling a failed request in Fetch involves checking the response status and handling exceptions.
+
+**Steps:**
+
+1. **Check Response Status:**
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => {
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           return response.json();
+       })
+       .then(data => {
+           console.log(data);
+       })
+       .catch(error => {
+           console.error('Error:', error);
+       });
+   ```
+
+2. **Using `async/await` and Try-Catch:**
+
+   ```javascript
+   async function fetchData() {
+       try {
+           const response = await fetch('https://api.example.com/data');
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           const data = await response.json();
+           console.log(data);
+       } catch (error) {
+           console.error('Error:', error);
+       }
+   }
+
+   fetchData();
+   ```
+
+**Error Handling Techniques:**
+
+1. **Network Errors:** Use `catch()` to handle network errors (e.g., connection issues).
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .catch(error => {
+           console.error('Network Error:', error);
+       });
+   ```
+
+2. **HTTP Status Check:** Verify `response.ok` or `response.status` for non-200 status codes.
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => {
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           return response.json();
+       })
+       .catch(error => {
+           console.error('HTTP Error:', error);
+       });
+   ```
+
+3. **Retry Logic:** Implement retry logic for transient errors using exponential backoff.
+
+   ```javascript
+   async function fetchWithRetry(url, retries = 3) {
+       try {
+           const response = await fetch(url);
+           if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+           }
+           return await response.json();
+       } catch (error) {
+           if (retries > 0) {
+               console.log('Retrying...', retries);
+               await new Promise(resolve => setTimeout(resolve, 1000)); // Delay
+               return fetchWithRetry(url, retries - 1);
+           }
+
+
+           throw error;
+       }
+   }
+
+   fetchWithRetry('https://api.example.com/data')
+       .then(data => console.log(data))
+       .catch(error => console.error('Final Error:', error));
+   ```
+
+4. **Custom Error Messages:** Provide user-friendly error messages for different scenarios.
+
+   ```javascript
+   fetch('https://api.example.com/data')
+       .then(response => {
+           if (!response.ok) {
+               switch (response.status) {
+                   case 404:
+                       throw new Error('Resource not found');
+                   case 500:
+                       throw new Error('Server error');
+                   default:
+                       throw new Error('An unexpected error occurred');
+               }
+           }
+           return response.json();
+       })
+       .catch(error => {
+           console.error('Error:', error.message);
+       });
+   ```
+
+**Note:** Fetch won't reject on HTTP error statuses like 404 or 500; you must check `response.ok` or `response.status`.
+
+---
+
+## TypeScript
+
+### Basic
+
+---
+
+#### What are the differences between TypeScript and JavaScript?
+
+**TypeScript vs. JavaScript:**
+
+1. **TypeScript:**
+   - **Superset:** TypeScript is a superset of JavaScript, adding static typing and additional features.
+   - **Static Typing:** Supports static typing, allowing you to define variable types, interfaces, and more.
+   - **Compilation:** Requires compilation to JavaScript using the TypeScript compiler (`tsc`).
+   - **Error Checking:** Provides compile-time error checking and improved code quality.
+   - **Features:** Supports modern JavaScript features and additional TypeScript-specific features (e.g., interfaces, decorators).
+
+2. **JavaScript:**
+   - **Dynamic Typing:** Uses dynamic typing, where variable types are determined at runtime.
+   - **Interpreted:** Executed directly by the browser or JavaScript engine without compilation.
+   - **Flexibility:** Offers flexibility but may lead to runtime errors due to lack of type checking.
+   - **Features:** Supports ECMAScript standards and modern features (e.g., ES6+).
+
+**Example:**
+
+**TypeScript:**
+
+```typescript
+function greet(name: string): string {
+    return `Hello, ${name}!`;
+}
+
+const message: string = greet('Alice');
+console.log(message);
+```
+
+**JavaScript:**
+
+```javascript
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+
+const message = greet('Alice');
+console.log(message);
+```
+
+**Key Differences:**
+
+- **Type Annotations:** TypeScript allows defining types for variables, function parameters, and return values.
+- **Error Detection:** TypeScript catches errors at compile time, reducing runtime errors.
+- **IDE Support:** Enhanced IDE support with autocompletion, refactoring, and error checking.
+- **Community:** TypeScript has a growing community and is widely adopted in large projects.
+
+**Use Cases for TypeScript:**
+
+- **Large Projects:** TypeScript is ideal for large projects with complex codebases, where static typing improves maintainability.
+- **Team Collaboration:** TypeScript enhances collaboration by providing clear type definitions and preventing type-related errors.
+- **Modern Development:** TypeScript supports modern JavaScript features and integrates seamlessly with popular frameworks like React, Angular, and Vue.
+
+**Conclusion:**
+
+TypeScript offers significant benefits over JavaScript by providing static typing, error checking, and improved developer experience. It is especially valuable for large projects and teams seeking to enhance code quality and maintainability.
+
+---
+
+#### What are the data types in TypeScript?
+
+TypeScript provides a variety of data types, both primitive and complex, that enhance code safety and expressiveness.
+
+**Primitive Data Types:**
+
+1. **`number`:** Represents numeric values, including integers and floating-point numbers.
+
+   ```typescript
+   const age: number = 25;
+   const price: number = 9.99;
+   ```
+
+2. **`string`:** Represents text values.
+
+   ```typescript
+   const name: string = 'Alice';
+   const message: string = `Hello, ${name}!`;
+   ```
+
+3. **`boolean`:** Represents true or false values.
+
+   ```typescript
+   const isActive: boolean = true;
+   const isComplete: boolean = false;
+   ```
+
+4. **`null`:** Represents the absence of a value.
+
+   ```typescript
+   const emptyValue: null = null;
+   ```
+
+5. **`undefined`:** Represents an uninitialized or missing value.
+
+   ```typescript
+   let undefinedValue: undefined;
+   ```
+
+6. **`symbol`:** Represents unique identifiers.
+
+   ```typescript
+   const uniqueId: symbol = Symbol('id');
+   ```
+
+7. **`bigint`:** Represents large integers (introduced in TypeScript 3.2).
+
+   ```typescript
+   const largeNumber: bigint = BigInt(9007199254740991);
+   ```
+
+**Complex Data Types:**
+
+1. **`array`:** Represents an ordered list of values.
+
+   ```typescript
+   const numbers: number[] = [1, 2, 3, 4, 5];
+   const names: string[] = ['Alice', 'Bob', 'Charlie'];
+   ```
+
+2. **`tuple`:** Represents a fixed-length array with specific types for each element.
+
+   ```typescript
+   const person: [string, number] = ['Alice', 25];
+   ```
+
+3. **`object`:** Represents an object with key-value pairs.
+
+   ```typescript
+   const user: { name: string; age: number } = { name: 'Alice', age: 25 };
+   ```
+
+4. **`enum`:** Represents a set of named constants.
+
+   ```typescript
+   enum Color {
+       Red,
+       Green,
+       Blue
+   }
+   const favoriteColor: Color = Color.Red;
+   ```
+
+5. **`any`:** Represents any data type, allowing dynamic typing (use with caution).
+
+   ```typescript
+   let dynamicValue: any = 'Hello';
+   dynamicValue = 42;
+   ```
+
+6. **`unknown`:** Represents a value with an unknown type, safer than `any`.
+
+   ```typescript
+   let unknownValue: unknown = 'Hello';
+   ```
+
+7. **`void`:** Represents the absence of a return value (used for functions).
+
+   ```typescript
+   function logMessage(message: string): void {
+       console.log(message);
+   }
+   ```
+
+8. **`never`:** Represents a value that never occurs (e.g., function never returns).
+
+   ```typescript
+   function throwError(message: string): never {
+       throw new Error(message);
+   }
+   ```
+
+9. **`Function`:** Represents a function type.
+
+   ```typescript
+   const greet: (name: string) => string = (name) => `Hello, ${name}!`;
+   ```
+
+**Type Inference:**
+
+- TypeScript can infer types based on the assigned value, reducing the need for explicit type annotations.
+
+  ```typescript
+  let inferredNumber = 42; // Inferred as number
+  let inferredString = 'Hello'; // Inferred as string
+  ```
+
+**Type Aliases:**
+
+- Define custom types using type aliases for better code organization.
+
+  ```typescript
+  type User = { name: string; age: number };
+  const user: User = { name: 'Alice', age: 25 };
+  ```
+
+**Conclusion:**
+
+TypeScript's rich type system enhances code safety, maintainability, and readability. By leveraging static typing, developers can catch errors early and build more robust applications.
+
+---
+
+#### What data type allows a TypeScript variable to act like a JavaScript variable?
+
+The `any` data type in TypeScript allows a variable to act like a JavaScript variable, accepting any data type without type checking. It provides the flexibility of dynamic typing but sacrifices type safety.
+
+**Usage of `any`:**
+
+1. **Dynamic Values:** Use `any` for values with unknown or dynamic types at compile time.
+
+   ```typescript
+   let dynamicValue: any = 'Hello';
+   dynamicValue = 42; // Allowed
+   dynamicValue = { name: 'Alice' }; // Allowed
+   ```
+
+2. **Migration from JavaScript:** Use `any` when migrating JavaScript code to TypeScript to gradually introduce type safety.
+
+3. **Third-Party Libraries:** Use `any` for interacting with third-party libraries without TypeScript type definitions.
+
+**Example:**
+
+```typescript
+function processInput(input: any): void {
+    console.log(input);
+}
+
+processInput('Hello');
+processInput(42);
+processInput({ name: 'Alice' });
+```
+
+**Drawbacks of `any`:**
+
+- **Lack of Type Safety:** Disables compile-time type checking, leading to potential runtime errors.
+- **Reduced Readability:** Reduces code readability and maintainability by obscuring data types.
+- **Hidden Bugs:** Increases the risk of hidden bugs due to unchecked operations on values.
+
+**Best Practices:**
+
+- **Minimize Usage:** Use `any` sparingly and prefer specific types for better code quality.
+- **Gradual Typing:** Gradually replace `any` with specific types during refactoring.
+- **`unknown` Type:** Prefer the `unknown` type over `any` for better type safety, requiring type checks before usage.
+
+  ```typescript
+  let unknownValue: unknown = 'Hello';
+  if (typeof unknownValue === 'string') {
+      console.log(unknownValue.toUpperCase());
+  }
+  ```
+
+**Conclusion:**
+
+While `any` provides flexibility, it's important to use it judiciously and embrace TypeScript's type system to enhance code safety, readability, and maintainability.
+
+---
+
+#### What are Enums? What are the different types?
+
+Enums (Enumerations) in TypeScript are a way to define a set of named constants. They provide a way to organize and manage related values
+
+, making code more readable and maintainable.
+
+**Types of Enums:**
+
+1. **Numeric Enums:**
+   - Default enum type with auto-incrementing numeric values.
+   - Values start at 0 and increment by 1 unless explicitly specified.
+
+   ```typescript
+   enum Direction {
+       Up,    // 0
+       Down,  // 1
+       Left,  // 2
+       Right  // 3
+   }
+   ```
+
+   - **Custom Values:**
+
+   ```typescript
+   enum Status {
+       Success = 1,
+       Error = 2,
+       Pending = 3
+   }
+   ```
+
+2. **String Enums:**
+   - Enums with string values, providing more meaningful and readable constants.
+
+   ```typescript
+   enum Color {
+       Red = 'RED',
+       Green = 'GREEN',
+       Blue = 'BLUE'
+   }
+   ```
+
+3. **Heterogeneous Enums:**
+   - Mix of numeric and string values (less common, used sparingly).
+
+   ```typescript
+   enum Mixed {
+       No = 0,
+       Yes = 'YES'
+   }
+   ```
+
+**Enum Usage:**
+
+- **Access Enum Values:**
+
+  ```typescript
+  const direction: Direction = Direction.Up;
+  console.log(direction); // 0
+  ```
+
+- **Reverse Mapping (Numeric Enums):**
+
+  ```typescript
+  console.log(Direction[0]); // 'Up'
+  ```
+
+- **String Enums:**
+
+  ```typescript
+  const color: Color = Color.Red;
+  console.log(color); // 'RED'
+  ```
+
+**Use Cases:**
+
+1. **Descriptive Constants:** Enums provide descriptive names for related constants, improving code readability.
+
+   ```typescript
+   enum HttpStatus {
+       OK = 200,
+       NotFound = 404,
+       InternalServerError = 500
+   }
+   ```
+
+2. **State Management:** Enums are useful for representing states or modes in an application.
+
+   ```typescript
+   enum GameState {
+       Start,
+       Playing,
+       GameOver
+   }
+   ```
+
+3. **Enum Flags:** Combine enum values using bitwise operations (numeric enums).
+
+   ```typescript
+   enum Permissions {
+       Read = 1,    // 0001
+       Write = 2,   // 0010
+       Execute = 4  // 0100
+   }
+   const userPermissions = Permissions.Read | Permissions.Write;
+   ```
+
+**Limitations:**
+
+- **String Enums:** Do not support reverse mapping like numeric enums.
+- **Complexity:** Overuse of enums can lead to unnecessary complexity in code.
+
+**Best Practices:**
+
+- **Use Meaningful Names:** Use descriptive names for enum values to convey their purpose.
+- **Use Enums Sparingly:** Use enums for related constants with shared context, not arbitrary values.
+- **Avoid Heterogeneous Enums:** Use heterogeneous enums only when necessary for specific use cases.
+
+**Conclusion:**
+
+Enums provide a structured way to define related constants, improving code readability and maintainability. By choosing appropriate enum types, developers can create more organized and expressive code.
+
+---
+
+#### What are Union Types in TypeScript?
+
+Union types in TypeScript allow a variable to hold values of multiple specified types. They enable more flexible type declarations while maintaining type safety.
+
+**Syntax:**
+
+```typescript
+let variable: type1 | type2 | type3;
+```
+
+**Examples:**
+
+1. **Basic Union Type:**
+
+   ```typescript
+   let value: string | number;
+   value = 'Hello'; // Allowed
+   value = 42;      // Allowed
+   // value = true; // Error: Type 'boolean' is not assignable
+   ```
+
+2. **Union Type in Functions:**
+
+   ```typescript
+   function formatInput(input: string | number): string {
+       return `Formatted: ${input}`;
+   }
+
+   console.log(formatInput('Hello')); // 'Formatted: Hello'
+   console.log(formatInput(42));      // 'Formatted: 42'
+   ```
+
+3. **Complex Union Type:**
+
+   ```typescript
+   type User = { name: string; age: number };
+   type Admin = { name: string; role: string };
+
+   let person: User | Admin;
+   person = { name: 'Alice', age: 25 };      // User
+   person = { name: 'Bob', role: 'Admin' };  // Admin
+   ```
+
+**Use Cases:**
+
+1. **Flexible Input Types:** Union types enable functions to accept multiple input types.
+
+   ```typescript
+   function processInput(input: string | number): void {
+       if (typeof input === 'string') {
+           console.log(`String: ${input}`);
+       } else {
+           console.log(`Number: ${input}`);
+       }
+   }
+   ```
+
+2. **Optional Properties:** Union types can represent optional properties in objects.
+
+   ```typescript
+   type Config = {
+       width: number;
+       height: number;
+       color?: string | undefined; // Optional property
+   };
+   ```
+
+3. **Discriminated Unions:** Union types with a common discriminator property for type narrowing.
+
+   ```typescript
+   type Shape =
+       | { kind: 'circle'; radius: number }
+       | { kind: 'rectangle'; width: number; height: number };
+
+   function calculateArea(shape: Shape): number {
+       if (shape.kind === 'circle') {
+           return Math.PI * shape.radius ** 2;
+       } else {
+           return shape.width * shape.height;
+       }
+   }
+   ```
+
+**Benefits:**
+
+- **Type Safety:** Union types ensure values adhere to one of the specified types, reducing errors.
+- **Flexibility:** Allow handling of multiple scenarios within the same variable or function.
+- **Improved Readability:** Enhance code readability by explicitly defining possible types.
+
+**Limitations:**
+
+- **Complexity:** Overuse of union types can lead to complex code that's harder to understand.
+- **Type Narrowing Required:** Type guards or narrowing techniques are often needed to handle specific types.
+
+**Best Practices:**
+
+- **Use Descriptive Types:** Use meaningful type names for union components to improve readability.
+- **Limit Union Size:** Avoid overly large unions to keep code manageable and understandable.
+- **Combine with Type Guards:** Use type guards for runtime type checking and narrowing.
+
+**Conclusion:**
+
+Union types provide a powerful way to handle multiple types in TypeScript, enhancing code flexibility and safety. By using union types thoughtfully, developers can create more expressive and resilient code.
+
+---
+
+#### What is the difference between an Array and a Tuple in TypeScript?
+
+**Array:**
+
+- **Type Definition:** An array can hold multiple values of the same or different types.
+- **Homogeneous or Heterogeneous:** Arrays can be homogeneous (all elements of the same type) or heterogeneous (elements of different types).
+- **Dynamic Length:** Arrays can change in length, allowing elements to be added or removed.
+- **Flexible Access:** Elements can be accessed using indices.
+
+**Example:**
+
+```typescript
+const numbers: number[] = [1, 2, 3, 4, 5];
+const mixed: (string | number)[] = ['Alice', 25, 'Bob', 30];
+```
+
+**Tuple:**
+
+- **Type Definition:** A tuple is a fixed-length array with specified types for each element.
+- **Fixed Length:** Tuples have a fixed length, and each element has a predefined type.
+- **Structured Data:** Tuples are used for structured data with known types for each position.
+- **Access by Position:** Elements are accessed by their position in the tuple.
+
+**Example:**
+
+```typescript
+const person: [string, number] = ['Alice', 25];
+const coordinates: [number, number, number] = [10, 20, 30];
+```
+
+**Key Differences:**
+
+1. **Length and Type Constraints:**
+   - **Array:** Flexible length and can hold elements of any type (homogeneous or heterogeneous).
+   - **Tuple:** Fixed length with specific types for each position.
+
+2. **Use Cases:**
+   - **Array:** Used for collections of similar data types or lists with dynamic length.
+   - **Tuple:** Used for structured data where the order and type of elements are fixed.
+
+3. **Accessing Elements:**
+   - **Array:** Access elements using indices, but type safety is less strict.
+   - **Tuple:** Access elements by position with strict type checking.
+
+4. **Example:**
+
+   **Array:**
+
+   ```typescript
+   const fruits: string[] = ['Apple', 'Banana', 'Orange'];
+   fruits.push('Grapes'); // Allowed
+   ```
+
+   **Tuple:**
+
+   ```typescript
+   const person: [string, number] = ['Alice', 25];
+   // person.push('Engineer'); // Error: Property 'push' does not exist on type '[string, number]'
+   ```
+
+**Use Cases:**
+
+- **Array:** Suitable for dynamic collections, lists, and iterations.
+- **Tuple:** Ideal for fixed-size data structures like pairs, triples, or records with known types.
+
+**Conclusion:**
+
+Arrays and tuples serve different purposes in TypeScript, with arrays providing flexibility and tuples offering strict type safety for structured data. Understanding their differences helps developers choose the right data structure for their specific use case.
+
+---
+
+#### What are Utility Types in TypeScript? Give some examples.
+
+Utility types in TypeScript are built-in types that provide transformations and operations on existing types. They help manipulate and create new types based on existing ones, enhancing code reusability and expressiveness.
+
+**Common Utility Types:**
+
+1. **`Partial<T>`:**
+   - Makes all properties of a type `T` optional.
+
+   ```typescript
+   interface User {
+       name: string;
+       age: number;
+       email: string
+
+;
+   }
+
+   const partialUser: Partial<User> = {
+       name: 'Alice'
+   };
+   ```
+
+2. **`Required<T>`:**
+   - Makes all properties of a type `T` required.
+
+   ```typescript
+   interface User {
+       name?: string;
+       age?: number;
+       email?: string;
+   }
+
+   const requiredUser: Required<User> = {
+       name: 'Alice',
+       age: 25,
+       email: 'alice@example.com'
+   };
+   ```
+
+3. **`Readonly<T>`:**
+   - Makes all properties of a type `T` read-only.
+
+   ```typescript
+   interface User {
+       name: string;
+       age: number;
+   }
+
+   const readonlyUser: Readonly<User> = {
+       name: 'Alice',
+       age: 25
+   };
+
+   // readonlyUser.age = 30; // Error: Cannot assign to 'age' because it is a read-only property
+   ```
+
+4. **`Record<K, T>`:**
+   - Creates an object type with properties `K` of type `T`.
+
+   ```typescript
+   type UserRoles = 'admin' | 'editor' | 'viewer';
+
+   const userPermissions: Record<UserRoles, boolean> = {
+       admin: true,
+       editor: false,
+       viewer: true
+   };
+   ```
+
+5. **`Pick<T, K>`:**
+   - Creates a new type by selecting specific properties `K` from a type `T`.
+
+   ```typescript
+   interface User {
+       name: string;
+       age: number;
+       email: string;
+   }
+
+   type UserNameEmail = Pick<User, 'name' | 'email'>;
+
+   const user: UserNameEmail = {
+       name: 'Alice',
+       email: 'alice@example.com'
+   };
+   ```
+
+6. **`Omit<T, K>`:**
+   - Creates a new type by omitting specific properties `K` from a type `T`.
+
+   ```typescript
+   interface User {
+       name: string;
+       age: number;
+       email: string;
+   }
+
+   type UserWithoutEmail = Omit<User, 'email'>;
+
+   const user: UserWithoutEmail = {
+       name: 'Alice',
+       age: 25
+   };
+   ```
+
+7. **`Exclude<T, U>`:**
+   - Excludes types `U` from a union type `T`.
+
+   ```typescript
+   type AllColors = 'red' | 'green' | 'blue' | 'yellow';
+   type PrimaryColors = Exclude<AllColors, 'yellow'>; // 'red' | 'green' | 'blue'
+   ```
+
+8. **`Extract<T, U>`:**
+   - Extracts types `U` from a union type `T`.
+
+   ```typescript
+   type AllColors = 'red' | 'green' | 'blue' | 'yellow';
+   type PrimaryColors = Extract<AllColors, 'red' | 'green' | 'blue'>; // 'red' | 'green' | 'blue'
+   ```
+
+9. **`NonNullable<T>`:**
+   - Removes `null` and `undefined` from a type `T`.
+
+   ```typescript
+   type NullableString = string | null | undefined;
+   type NonNullableString = NonNullable<NullableString>; // string
+   ```
+
+10. **`ReturnType<T>`:**
+    - Extracts the return type of a function type `T`.
+
+    ```typescript
+    function getUser() {
+        return { name: 'Alice', age: 25 };
+    }
+
+    type UserType = ReturnType<typeof getUser>; // { name: string; age: number }
+    ```
+
+11. **`InstanceType<T>`:**
+    - Extracts the instance type of a constructor type `T`.
+
+    ```typescript
+    class User {
+        constructor(public name: string, public age: number) {}
+    }
+
+    type UserInstance = InstanceType<typeof User>; // User
+    ```
+
+**Use Cases:**
+
+- **Type Transformations:** Create new types by modifying existing ones for different scenarios.
+- **Code Reusability:** Reuse types and transformations across multiple components and modules.
+- **Flexible Design:** Enhance type flexibility and expressiveness in complex applications.
+
+**Conclusion:**
+
+Utility types in TypeScript provide powerful tools for transforming and manipulating types, enhancing code reusability, flexibility, and expressiveness. By leveraging utility types, developers can create more robust and maintainable applications.
+
+---
+
+#### What is the difference between an Interface and a Type Alias in TypeScript?
+
+**Interface:**
+
+- **Definition:** An interface is a way to define the shape of an object, including properties, methods, and optional or readonly members.
+
+  ```typescript
+  interface User {
+      name: string;
+      age: number;
+      greet(): void;
+  }
+  ```
+
+- **Inheritance:** Interfaces support extending other interfaces using `extends`.
+
+  ```typescript
+  interface Person {
+      name: string;
+  }
+
+  interface Employee extends Person {
+      employeeId: number;
+  }
+  ```
+
+- **Implementation:** Classes can implement interfaces to enforce a contract.
+
+  ```typescript
+  class User implements User {
+      name: string;
+      age: number;
+      greet(): void {
+          console.log(`Hello, ${this.name}`);
+      }
+  }
+  ```
+
+- **Merging:** Interfaces can be merged, allowing multiple declarations with the same name to combine.
+
+  ```typescript
+  interface Point {
+      x: number;
+  }
+
+  interface Point {
+      y: number;
+  }
+
+  const point: Point = { x: 10, y: 20 };
+  ```
+
+**Type Alias:**
+
+- **Definition:** A type alias defines a custom type by giving a name to a type expression, including unions, intersections, primitives, and more.
+
+  ```typescript
+  type User = {
+      name: string;
+      age: number;
+      greet(): void;
+  };
+  ```
+
+- **Complex Types:** Type aliases can represent complex types, including unions and intersections.
+
+  ```typescript
+  type ID = string | number;
+  type Employee = User & { employeeId: number };
+  ```
+
+- **Aliases for Primitives:** Type aliases can be used to create aliases for primitive types.
+
+  ```typescript
+  type Name = string;
+  ```
+
+- **Cannot be Merged:** Type aliases cannot be merged like interfaces.
+
+**Key Differences:**
+
+1. **Use Cases:**
+   - **Interface:** Use interfaces for defining object shapes, especially when extending or implementing classes.
+   - **Type Alias:** Use type aliases for complex types, unions, intersections, and when defining non-object types.
+
+2. **Inheritance:**
+   - **Interface:** Supports extending interfaces and implementing in classes.
+   - **Type Alias:** Can create intersections with other types but cannot extend or implement.
+
+3. **Declaration Merging:**
+   - **Interface:** Supports merging, allowing multiple declarations with the same name.
+   - **Type Alias:** Does not support merging.
+
+4. **Syntax:**
+   - **Interface:** Uses the `interface` keyword.
+   - **Type Alias:** Uses the `type` keyword.
+
+5. **Flexibility:**
+   - **Interface:** Suitable for objects with methods and properties.
+   - **Type Alias:** Suitable for unions, intersections, primitives, and complex types.
+
+**Example:**
+
+**Interface:**
+
+```typescript
+interface User {
+    name: string;
+    age: number;
+    greet(): void;
+}
+```
+
+**Type Alias:**
+
+```typescript
+type User = {
+    name: string;
+    age: number;
+    greet(): void;
+};
+```
+
+**Use Cases:**
+
+- **Interface:** Use for defining object structures, classes, and APIs.
+- **Type Alias:** Use for complex types, unions, intersections, and primitives.
+
+**Conclusion:**
+
+Interfaces and type aliases serve different purposes in TypeScript, with interfaces focusing on object structures and type aliases providing flexibility for complex types. By choosing the appropriate construct, developers can create more organized and expressive code.
+
+---
+
+#### How can you create a class in TypeScript?
+
+To create a class in TypeScript, use the `class` keyword, followed by the class name, properties, and methods.
+
+**Class Declaration:**
+
+1. **Basic Class:**
+
+   ```typescript
+   class Person {
+       name: string;
+       age: number;
+
+       constructor(name: string, age: number) {
+           this.name = name;
+           this.age = age;
+       }
+
+       greet(): void {
+           console.log(`Hello, ${this.name}`);
+       }
+   }
+   ```
+
+2. **Access Modifiers:**
+
+   - **`public`:** Accessible from anywhere (default).
+
+     ```typescript
+     class Employee {
+         public name: string;
+
+         constructor(name: string) {
+             this.name = name;
+         }
+     }
+     ```
+
+   - **`private`:** Accessible only within the class.
+
+     ```typescript
+     class Employee {
+         private salary: number;
+
+         constructor(salary: number) {
+             this.salary = salary;
+         }
+
+         getSalary(): number {
+             return this.salary;
+         }
+     }
+     ```
+
+   - **`protected`:** Accessible within the class and its subclasses.
+
+     ```typescript
+     class Employee {
+         protected department: string;
+
+         constructor(department: string) {
+             this.department = department;
+         }
+     }
+     ```
+
+3. **Readonly Properties:**
+
+   ```typescript
+   class Employee {
+       readonly id: number;
+
+       constructor(id: number) {
+           this.id = id;
+       }
+   }
+   ```
+
+4. **Inheritance:**
+
+   ```typescript
+   class Animal {
+       makeSound(): void {
+           console.log('Animal sound');
+       }
+   }
+
+   class Dog extends Animal {
+       makeSound(): void {
+           console.log
+
+('Bark');
+       }
+   }
+   ```
+
+5. **Abstract Classes:**
+
+   ```typescript
+   abstract class Shape {
+       abstract calculateArea(): number;
+   }
+
+   class Circle extends Shape {
+       constructor(private radius: number) {
+           super();
+       }
+
+       calculateArea(): number {
+           return Math.PI * this.radius ** 2;
+       }
+   }
+   ```
+
+6. **Getters and Setters:**
+
+   ```typescript
+   class Employee {
+       private _name: string;
+
+       get name(): string {
+           return this._name;
+       }
+
+       set name(value: string) {
+           this._name = value;
+       }
+   }
+   ```
+
+**Example Usage:**
+
+```typescript
+class Person {
+    constructor(public name: string, public age: number) {}
+
+    greet(): void {
+        console.log(`Hello, ${this.name}`);
+    }
+}
+
+const person = new Person('Alice', 25);
+person.greet(); // 'Hello, Alice'
+```
+
+**Conclusion:**
+
+Classes in TypeScript provide a powerful way to define blueprints for objects, encapsulating properties and behaviors. By leveraging features like access modifiers, inheritance, and abstract classes, developers can create robust and maintainable object-oriented code.
+
+---
+
+#### How can you create a function in TypeScript?
+
+To create a function in TypeScript, use the `function` keyword, followed by the function name, parameters with types, and the return type.
+
+**Function Declaration:**
+
+1. **Basic Function:**
+
+   ```typescript
+   function add(a: number, b: number): number {
+       return a + b;
+   }
+   ```
+
+2. **Function Expression:**
+
+   ```typescript
+   const multiply = (a: number, b: number): number => {
+       return a * b;
+   };
+   ```
+
+3. **Optional Parameters:**
+
+   ```typescript
+   function greet(name: string, greeting?: string): string {
+       return `${greeting || 'Hello'}, ${name}`;
+   }
+
+   console.log(greet('Alice')); // 'Hello, Alice'
+   console.log(greet('Alice', 'Hi')); // 'Hi, Alice'
+   ```
+
+4. **Default Parameters:**
+
+   ```typescript
+   function greet(name: string, greeting: string = 'Hello'): string {
+       return `${greeting}, ${name}`;
+   }
+
+   console.log(greet('Alice')); // 'Hello, Alice'
+   console.log(greet('Alice', 'Hi')); // 'Hi, Alice'
+   ```
+
+5. **Rest Parameters:**
+
+   ```typescript
+   function sum(...numbers: number[]): number {
+       return numbers.reduce((total, num) => total + num, 0);
+   }
+
+   console.log(sum(1, 2, 3)); // 6
+   ```
+
+6. **Function Overloading:**
+
+   ```typescript
+   function format(value: string): string;
+   function format(value: number): string;
+   function format(value: any): string {
+       if (typeof value === 'string') {
+           return `String: ${value}`;
+       }
+       return `Number: ${value}`;
+   }
+
+   console.log(format('Alice')); // 'String: Alice'
+   console.log(format(42)); // 'Number: 42'
+   ```
+
+7. **Arrow Functions:**
+
+   ```typescript
+   const greet = (name: string): string => `Hello, ${name}`;
+   ```
+
+8. **Void Return Type:**
+
+   ```typescript
+   function logMessage(message: string): void {
+       console.log(message);
+   }
+   ```
+
+**Example Usage:**
+
+```typescript
+function calculateArea(radius: number): number {
+    return Math.PI * radius ** 2;
+}
+
+console.log(calculateArea(5)); // 78.53981633974483
+```
+
+**Conclusion:**
+
+Functions in TypeScript provide a flexible and type-safe way to define reusable code blocks. By using features like optional parameters, default values, and function overloading, developers can create expressive and robust functions.
+
+---
+
+#### How can you achieve the different OOP pillars in TypeScript?
+
+Object-Oriented Programming (OOP) pillars can be achieved in TypeScript using classes, interfaces, inheritance, and other features.
+
+**1. Encapsulation:**
+
+Encapsulation involves bundling data and methods within a class and restricting access to specific parts.
+
+- **Access Modifiers:** Use `public`, `private`, and `protected` to control access.
+
+  ```typescript
+  class Person {
+      private name: string;
+      private age: number;
+
+      constructor(name: string, age: number) {
+          this.name = name;
+          this.age = age;
+      }
+
+      getName(): string {
+          return this.name;
+      }
+
+      getAge(): number {
+          return this.age;
+      }
+  }
+
+  const person = new Person('Alice', 25);
+  console.log(person.getName()); // 'Alice'
+  ```
+
+**2. Inheritance:**
+
+Inheritance allows a class to inherit properties and methods from another class, promoting code reuse.
+
+- **`extends` Keyword:** Use `extends` to create a subclass.
+
+  ```typescript
+  class Animal {
+      makeSound(): void {
+          console.log('Animal sound');
+      }
+  }
+
+  class Dog extends Animal {
+      makeSound(): void {
+          console.log('Bark');
+      }
+  }
+
+  const dog = new Dog();
+  dog.makeSound(); // 'Bark'
+  ```
+
+**3. Polymorphism:**
+
+Polymorphism allows objects to be treated as instances of their parent class, enabling flexibility and interchangeability.
+
+- **Method Overriding:** Override methods in subclasses to provide specific behavior.
+
+  ```typescript
+  class Shape {
+      calculateArea(): number {
+          return 0;
+      }
+  }
+
+  class Circle extends Shape {
+      constructor(private radius: number) {
+          super();
+      }
+
+      calculateArea(): number {
+          return Math.PI * this.radius ** 2;
+      }
+  }
+
+  const shape: Shape = new Circle(5);
+  console.log(shape.calculateArea()); // 78.53981633974483
+  ```
+
+**4. Abstraction:**
+
+Abstraction involves creating abstract classes or interfaces to define common behavior without implementation details.
+
+- **Abstract Classes:** Use `abstract` keyword to define abstract classes and methods.
+
+  ```typescript
+  abstract class Vehicle {
+      abstract startEngine(): void;
+  }
+
+  class Car extends Vehicle {
+      startEngine(): void {
+          console.log('Engine started');
+      }
+  }
+
+  const car = new Car();
+  car.startEngine(); // 'Engine started'
+  ```
+
+- **Interfaces:** Define contracts for classes to implement.
+
+  ```typescript
+  interface Drawable {
+      draw(): void;
+  }
+
+  class Rectangle implements Drawable {
+      draw(): void {
+          console.log('Drawing rectangle');
+      }
+  }
+
+  const rectangle = new Rectangle();
+  rectangle.draw(); // 'Drawing rectangle'
+  ```
+
+**Conclusion:**
+
+TypeScript's OOP features allow developers to implement encapsulation, inheritance, polymorphism, and abstraction, promoting code organization, reuse, and flexibility. By leveraging these pillars, developers can build maintainable and scalable applications.
+
+---
+
+#### What is the purpose of the `tsconfig.json` file?
+
+The `tsconfig.json` file is a configuration file used by the TypeScript compiler to define project-specific settings, compiler options, and file inclusion/exclusion rules.
+
+**Purpose of `tsconfig.json`:**
+
+1. **Compiler Options:**
+   - Configure TypeScript compiler behavior, including target ECMAScript version, module system, and more.
+
+   ```json
+   {
+       "compilerOptions": {
+           "target": "ES6",
+           "module": "commonjs",
+           "strict": true,
+           "outDir": "dist",
+           "sourceMap": true
+       }
+   }
+   ```
+
+2. **File Inclusion/Exclusion:**
+   - Specify which files and directories should be included or excluded from compilation.
+
+   ```json
+   {
+       "include": ["src/**/*.ts"],
+       "exclude": ["node_modules", "dist"]
+   }
+   ```
+
+3. **Project Structure:**
+   - Define the project's root directory and output directory for compiled files.
+
+   ```json
+   {
+       "compilerOptions": {
+           "rootDir": "src",
+           "outDir": "dist"
+       }
+   }
+   ```
+
+4. **Type Checking:**
+   - Enable or disable strict type-checking options, such as `strictNullChecks` and `noImplicitAny`.
+
+   ```json
+   {
+       "compilerOptions": {
+           "strictNullChecks": true,
+           "noImplicitAny": true
+       }
+   }
+   ```
+
+5. **Module Resolution:**
+   - Configure how modules are resolved, including paths, aliases, and extensions.
+
+   ```json
+   {
+       "compilerOptions": {
+           "baseUrl": ".",
+           "paths": {
+               "@components/*": ["src/components/*"]
+           }
+       }
+   }
+   ```
+
+6. **Experimental Features:**
+   - Enable experimental features, such as decorators and JSX support.
+
+   ```json
+   {
+       "compilerOptions": {
+           "experimentalDecorators": true,
+           "jsx": "react"
+       }
+   }
+   ```
+
+7. **Build Mode:**
+   - Enable incremental builds and project references for larger projects.
+
+   ```json
+   {
+       "compilerOptions": {
+           "composite": true,
+           "incremental": true
+       }
+   }
+   ```
+
+**Example `tsconfig.json`:**
+
+```json
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "strict": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "@components/*": ["src/components/*
+
+"]
+        },
+        "experimentalDecorators": true,
+        "jsx": "react"
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist"]
+}
+```
+
+**Benefits:**
+
+- **Consistency:** Ensures consistent compiler settings across the project, reducing discrepancies between environments.
+- **Type Safety:** Enforces strict type checking and compiler options, improving code quality and maintainability.
+- **Build Configuration:** Simplifies build configuration, making it easy to customize compilation behavior.
+
+**Conclusion:**
+
+The `tsconfig.json` file is an essential part of TypeScript projects, providing a centralized location for configuring the TypeScript compiler. By leveraging its options, developers can customize compilation behavior, enforce coding standards, and improve code quality and maintainability.
