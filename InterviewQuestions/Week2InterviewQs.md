@@ -4378,9 +4378,7 @@ The event object provides information about an event and methods to control its 
    element.addEventListener('click', (e) => {
        console.log(e.type); // 'click'
    });
-   ``
-
-`
+   ```
 
 4. **`bubbles`:**
    - Indicates whether the event bubbles up through the DOM.
@@ -5335,9 +5333,7 @@ Utility types in TypeScript are built-in types that provide transformations and 
        name: string;
        age: number;
        email: string
-
-;
-   }
+   ;}
 
    const partialUser: Partial<User> = {
        name: 'Alice'
