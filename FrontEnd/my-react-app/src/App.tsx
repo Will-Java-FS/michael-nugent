@@ -1,34 +1,31 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+// import Intro from './components/Intro.tsx'
+// import Actor from './components/Actor-info.tsx'
+// import MovieList from './components/MovieList.tsx'
+// import ContactForm from './components/ContactForm.tsx'
+// import Counter from './components/Counter.tsx'
+// import ActorList from './components/ActorList.tsx'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // const chris = {
+  //   name: "Chris Evans",
+  //   age: 42,
+  //   worth: 250000000
+  // }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    {/* <>
+    /* <Intro />
+    <Actor name='Ryan Reynolds' age={47} worth={350000000} />
+    <Actor name='Robert Downey Jr.' age={59} worth={300000000} />
+    <Actor {...chris} />
+    <MovieList />
+    <ContactForm />
+    <Counter />
+    <ActorList />
+    </> */}
   )
 }
 

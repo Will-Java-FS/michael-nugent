@@ -1,29 +1,27 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // import App from './App.tsx'
-import Intro from './components/Intro.tsx'
-import Actor from './components/Actor-info.tsx'
 import './index.css'
-import MovieList from './components/MovieList.tsx'
-import ContactForm from './components/ContactForm.tsx'
-import Counter from './components/Counter.tsx'
-
-
-const chris = {
-  name: "Chris Evans",
-  age: 42,
-  worth: 250000000
-}
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './pages/layout.tsx'
+import Home from './pages/home.tsx'
+import Blogs from './pages/blogs.tsx'
+import ContactUs from './pages/contact-us.tsx'
+import PokemonPage from './pages/pokemon.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* <App /> */}
-    <Intro />
-    <Actor name='Ryan Reynolds' age={47} worth={350000000} />
-    <Actor name='Robert Downey Jr.' age={59} worth={300000000} />
-    <Actor {...chris} />
-    <MovieList />
-    <ContactForm />
-    <Counter />
+    <BrowserRouter>
+      <Routes>
+        <Route path="*" element={<Layout />}>
+        </Route>
+      </Routes>
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path='/contact-us' element={<ContactUs />} />
+        <Route path='/pokemon' element={<PokemonPage />} />
+      </Routes>
+    </BrowserRouter>
   </StrictMode>
 )
