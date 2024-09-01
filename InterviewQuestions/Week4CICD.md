@@ -185,7 +185,6 @@
 **5. Can you use S3 to host a front-end or back-end of an application?**
    - Yes, you can host static websites (HTML, CSS, JS) on S3. For dynamic back-end services, you'd need additional services like AWS Lambda, API Gateway, or an EC2 instance.
 
-   Here's a guide for answering your Docker study questions:
 
 # Docker
 
